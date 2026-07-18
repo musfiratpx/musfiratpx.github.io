@@ -72,7 +72,8 @@ loader.load('assets/Planets.glb', function(gltf) {
     if (planetMesh) {
         planetMesh.position.set(0, 0, 0);
         planetMesh.position.x = startX + (index * spacing);
-        planetMesh.userData = { isPlanet: true, displayName: cleanPlanetNames[planetName] };
+        planetMesh.userData = { 
+            isPlanet: true, displayName: cleanPlanetNames[planetName] };
         planetMesh.scale.set(2, 2, 2);
 
         scene.add(planetMesh);
@@ -150,6 +151,7 @@ window.addEventListener('mousemove', (event) => {
     const intersects = raycaster.intersectObjects(activePlanets, true);
     if (intersects.length > 0) {
          canvas.style.cursor = "url('assets/kirby.cur'), auto";
+         //did this so its easy to tell if ur clicking planet vs puddle, since idk smth can happen and there's overlap
     } 
     else {
      canvas.style.cursor = 'default';
@@ -227,7 +229,7 @@ function createPuddle() {
     puddle.style.width = `${size}px`;
     puddle.style.height = `${size}px`;
 
-    // loop until we find coordinates that do not hit a planet
+    // loop until puddle can spawn in an area that won't collide w  a planet
     let randomX = 0;
     let randomY = 0;
     let attempts = 0;
