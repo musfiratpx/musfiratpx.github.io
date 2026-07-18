@@ -1,0 +1,133 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh; /* page to takes up the full screen height */
+  background-color: #04020F; /*dark background color*/
+}
+/* activate: .\venv\Scripts\Activate.ps1, deactive */
+body {
+  /* base gradient */
+  
+  background-image: linear-gradient(135deg, #070221 0%, #04020F 100%);
+  /* this tells it to stack the stars*/
+  position: relative;
+}
+
+body::before { /* stack stars before you create the gradient */
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* stars*/
+  background-image: 
+    radial-gradient(white, rgba(255, 255, 255, 0.2) 1.5px, transparent 1.5px),
+    radial-gradient(white, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    radial-gradient(white, rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+  /* sizing the grid for the star patterns */
+  background-size: 250px 250px, 180px 180px, 320px 320px;
+  /* shifting the grids so the stars look scattered and random */
+  background-position: 0 0, 40px 60px, 130px 190px;
+  /* stars repeat over and over to fill the screen */
+  background-repeat: repeat;
+  
+  /* stars behind any text/content */
+  z-index: 0; 
+}
+
+
+.planet-container  {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
+
+/* puddles */
+#puddle-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;           /* sit completely in front of the planets */
+  pointer-events: none; /* clickable puddles */
+  overflow: hidden;
+}
+
+
+
+.space-puddle {
+  position: absolute;
+  /* semi-transparent background & sharp border */
+  background: radial-gradient(circle, rgba(117, 61, 255, 0.4) 0%, rgba(0, 212, 255, 0.1) 70%);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.2), 0 0 20px rgba(0, 212, 255, 0.3);
+  
+  mix-blend-mode: screen; 
+  pointer-events: auto;
+  cursor: pointer;      /* changes cursor to a hand icon on hover */
+  opacity: 0;
+  animation: puddleLife 10s ease-in-out forwards;
+}
+
+/* visual response when the user hovers over a puddle */
+.space-puddle:hover {
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.4), 0 0 30px rgba(0, 212, 255, 0.6);
+  transform: scale(1.05);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+
+/* animation  */
+@keyframes puddleLife {
+  0% {
+    transform: scale(0.3) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1; /* fade in */
+  }
+  50% {
+    transform: scale(1.0) rotate(15deg); /* slowly grows and rotates */
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2) rotate(30deg);
+    opacity: 0; /* fade out at 10 seconds */
+  }
+}
+
+
+
+
+
+
+
+
+
+
+.glow {
+  color: #E0DBFF;
+  text-align: center;
+  font-size: 2em;
+  animation: glow 1s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  from {
+    text-shadow: 0 0 15px #E0DBFF, 0 0 15px #E0DBFF, 0 0 15px #0b094d, 0 0 15px #0b094d, 0 0 15px #0b094d, 0 0 15px #0b094d, 0 0 15px #0b094d;
+  }
+  
+  to {
+    text-shadow: 0 0 15px #E0DBFF, 0 0 15px #6358e1, 0 0 15px #6358e1, 0 0 15px #6358e1, 0 0 15px #6358e1, 0 0 15px #6358e1, 0 0 15px #6358e1;
+  }
+}
+
