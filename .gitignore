@@ -1,0 +1,5 @@
+.env
+.venv/
+free_space_db/
+__pycache__/
+*.pyc
