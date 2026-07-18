@@ -23,7 +23,7 @@ tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 #nasa
 NASA_API_KEY = os.getenv("NASA_API_KEY")
 
-# Fetch NASA Astronomy Picture of the Day (APOD)
+# get NASA Astronomy Picture of the Day (APOD)
 def get_nasa_apod():
     NASA_API_KEY = os.getenv("NASA_API_KEY")
     url = f"https://api.nasa.gov/planetary/apod?api_key={NASA_API_KEY}"
