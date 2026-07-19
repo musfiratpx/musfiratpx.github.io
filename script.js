@@ -10,14 +10,14 @@ const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerH
 
 // canvas (planet container) setup
 const renderer = new THREE.WebGLRenderer({ 
-    canvas: document.querySelector('.planet-container'), 
+    canvas: document.querySelector('.planet-container'),
     antialias: true,
     alpha: true //transparent background
 
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setClearColor(0x000000, 0);
+renderer.setClearColor(0x000000, 0); //background
 
 // lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
@@ -27,14 +27,13 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
 directionalLight.position.set(5, 10, 7);
 scene.add(directionalLight);
 
-// hold for animation & raycasting
-const activePlanets = [];
+const activePlanets = []; //created to hold the planets that i will display in here
 const visualPlanets = []; 
 
 
 
 // planet names 
-const cleanPlanetNames = {
+const planetNames = {
     "Mercury": "Mercury",
     "Venus": "Venus",
     "Earth": "Earth",
@@ -45,26 +44,25 @@ const cleanPlanetNames = {
     "Neptune": "Neptune"
 };
 
-// this is the order the planets are in
 const astronomicalOrder = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"];
 
 const loader = new GLTFLoader();
 
 loader.load('assets/Planets.glb', function(gltf) {
     const masterScene = gltf.scene;
-    const foundPlanets = {};
+    const foundPlanets = {}; //match the name to the mesh file of the planets, and this is where it will be stored
 
     masterScene.traverse((child) => {
-        if (child.isMesh && cleanPlanetNames[child.name]) {
+        if (child.isMesh && planetNames[child.name]) {
             foundPlanets[child.name] = child;
         }
         if (child.isMesh) {
-            console.log('Found mesh:', child.name); // see EVERY mesh name in the file
+            console.log('Found mesh:', child.name); //so that I can see the names of the planets, debugging.
         }
     });
 
-    const spacing = 4.2; 
-    const startX = -((astronomicalOrder.length - 1) * spacing) / 2; // centers the planets perfectly
+    const spacing = 4.2; //to set the space between each planet
+    const startX = -((astronomicalOrder.length - 1) * spacing) / 2; //to center the planets
 
    astronomicalOrder.forEach((planetName, index) => {
     const planetMesh = foundPlanets[planetName];
@@ -73,13 +71,13 @@ loader.load('assets/Planets.glb', function(gltf) {
         planetMesh.position.set(0, 0, 0);
         planetMesh.position.x = startX + (index * spacing);
         planetMesh.userData = { 
-            isPlanet: true, displayName: cleanPlanetNames[planetName] };
+            isPlanet: true, displayName: planetNames[planetName] };
         planetMesh.scale.set(2, 2, 2);
 
         scene.add(planetMesh);
         visualPlanets.push(planetMesh);
 
-        //  hitbox sphere, same fixed size for every planet
+        //  hitbox sphere, same fixed size for every planet. simpler to calculate where the mouse intersects with the 3d object.
         const hitSphere = new THREE.Mesh(
             new THREE.SphereGeometry(1.2*2, 8, 8), 
             new THREE.MeshBasicMaterial({ visible: false })
@@ -89,12 +87,12 @@ loader.load('assets/Planets.glb', function(gltf) {
         hitSphere.userData = planetMesh.userData;
         scene.add(hitSphere);
 
-        activePlanets.push(hitSphere); // raycast against the hitbox, not the mesh
+        activePlanets.push(hitSphere); // put all the hitboxes (spheres) inside the active planets
     }
 });
 
 }, undefined, function(error) {
-    console.error('Error opening Planets.glb:', error);
+    console.error('Error opening Planets.glb:', error); //debugging
 });
 
 // position  camera to see all 8 items comfortably
@@ -109,23 +107,23 @@ window.addEventListener('click', (event) => {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(activePlanets, true);
-    console.log('activePlanets:', activePlanets.length, 'intersects:', intersects.length); 
+    const intersectedObjects = raycaster.intersectObjects(activePlanets, true); //the raycaster detects intersections w/ the hitbox.
+    console.log('activePlanets:', activePlanets.length, 'intersects:', intersectedObjects.length);  //debugging to see if all the hitboxes (planets) are in there, and # of intersects
   
 
-    // loop through the hits until we find an actual solid planet body
-    for (let i = 0; i < intersects.length; i++) {
-    let hitObject = intersects[i].object;
-    console.log('Hit:', hitObject.name); // NEW
+    // loop through the intersections
+    for (let i = 0; i < intersectedObjects.length; i++) {
+    let hitObject = intersectedObjects[i].object;
+    console.log('Hit:', hitObject.name); //debugging purposes. Successfully clicked THIS object.
 
     if (hitObject.name.toLowerCase().includes('ring') || hitObject.name.toLowerCase().includes('atmosphere')) {
-        continue;
+        continue; //skip if the object is a ring (saturn) or an atmosphere, because those are NOT the planets themselves.
     }
 
     while (hitObject && !hitObject.userData.isPlanet) {
         hitObject = hitObject.parent;
     }
-
+    //debugging purposes
     console.log('Climbed to:', hitObject ? hitObject.name : 'null', hitObject ? hitObject.userData : 'n/a'); 
 
     if (hitObject && hitObject.userData.displayName) {
@@ -167,18 +165,15 @@ window.addEventListener('mousemove', (event) => {
 function animate() {
     requestAnimationFrame(animate);
 
-    // Spin each loaded planet individually on its Y-axis
+    // to spin each loaded planet
     visualPlanets.forEach((planet) => {
     planet.rotation.y += 0.01;
     });
 
     renderer.render(scene, camera);
 }
-
-// start the loop
 animate();
 
-// window resizing
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
