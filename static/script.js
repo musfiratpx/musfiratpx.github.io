@@ -20,7 +20,7 @@ function getSelectedPlanet(planetName){
     const planet = {
         planet_name: planetName
     };
-    fetch('/api/selected-planet',{
+    fetch('https://backend-space-ae7j.onrender.com/api/selected-planet',{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
