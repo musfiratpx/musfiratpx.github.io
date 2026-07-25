@@ -61,7 +61,7 @@ const astronomicalOrder = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Satu
 
 const loader = new GLTFLoader();
 
-loader.load('/static/assets/Planets.glb', function(gltf) {
+loader.load('static/assets/Planets.glb', function(gltf) {
     const masterScene = gltf.scene;
     const foundPlanets = {}; //match the name to the mesh file of the planets, and this is where it will be stored
 
@@ -143,7 +143,7 @@ window.addEventListener('mousemove', (event) => {
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(activePlanets, true);
     if (intersects.length > 0) {
-         canvas.style.cursor = "url('/static/assets/kirby.cur'), auto";
+         canvas.style.cursor = "url('static/assets/kirby.cur'), auto";
          //did this so its easy to tell if ur clicking planet vs puddle, since idk smth can happen and there's overlap
     } 
     else {
