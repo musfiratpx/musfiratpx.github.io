@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 app = Flask(__name__, template_folder='.')
 CORS(app, origins=["https://theouterspace.io", "https://musfiratpx.github.io"])
+CORS(app, resources={r"/api/*": {"origins": "*"}}, methods=["GET", "POST", "OPTIONS"])
 load_dotenv()
 tavily_key = os.getenv("TAVILY_API_KEY")
 gemini_key = os.getenv("GEMINI_API_KEY")
@@ -67,7 +68,8 @@ def generateInfo(planet): #logic to generate information for the planet
 def home():
     return render_template('index.html')
 
-@app.route('/api/selected-planet', methods=['POST'])
+@app.route('/api/selected-planet', methods=['POST', 'OPTIONS'])
+@app.route('/api/selected-planet/', methods=['POST', 'OPTIONS'])
 def selected_planet():
     data = request.get_json()
     if not data:
