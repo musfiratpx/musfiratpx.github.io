@@ -123,12 +123,8 @@ window.addEventListener('click', (event) => {
     for (let i = 0; i < intersectedObjects.length; i++) {
         let hitObject = intersectedObjects[i].object;
         if (hitObject && hitObject.userData.displayName) {
-            alert('You clicked on ' + hitObject.userData.displayName + '!');
             getSelectedPlanet(hitObject.userData.displayName);
-            break;
-        }
-        else {
-            alert('hit box is not working at this moment.');
+            alert('You clicked on ' + hitObject.userData.displayName + '!');
             break;
         }
     }
@@ -231,8 +227,8 @@ function createPuddle() {
     puddle.style.filter = `hue-rotate(${randomHue}deg)`;
 
     puddle.addEventListener('click', () => {
-        alert("This is a space puddle");
         getSelectedPlanet("Puddle"); //even though its not a planet, its also clickable. 
+        alert("This is a space puddle");
         puddle.remove();
     });
 
