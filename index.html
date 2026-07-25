@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Explore the planets!</title>
-    <link rel="icon" type="image/x-icon" href="./assets/kirbyopen.ico">
-    <link rel="stylesheet" href="./style.css">
+   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/kirbyopen.ico') }}">    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>    
     <h1 class="glow">Explore Space...</h1>
     <div id="puddle-container"></div>
 
   <canvas class="planet-container"></canvas>
-
- <script type= "module" src="./script.js"></script>
+<script type="module" src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
