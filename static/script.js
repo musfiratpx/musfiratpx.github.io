@@ -5,6 +5,7 @@ import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/js
 // allow for importing the .gltf file
 import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
 
+const canvas = document.querySelector('.planet-container');
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -26,6 +27,17 @@ function getSelectedPlanet(planetName){
         },
         body: JSON.stringify(planet)
     })
+    .then(response => response.json())
+    .then(planetInfo => {
+        const responseBox = document.querySelector(".response-box");
+        if (responseBox && planetInfo.facts) {
+            responseBox.innerHTML = `
+                <h1 class="glow">${planetName}</h1>
+                <p class="planet-fact">${planetInfo.facts}</p>
+            `;
+        }
+    })
+    .catch(err => console.error("Error loading info:", err));
 }
 
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -116,8 +128,9 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 window.addEventListener('click', (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    const canvasBounds = canvas.getBoundingClientRect();
+    mouse.x = ((event.clientX - canvasBounds.left)/ canvasBounds.width) * 2 - 1;
+    mouse.y = -((event.clientY - canvasBounds.top)/ canvasBounds.height) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     const intersectedObjects = raycaster.intersectObjects(activePlanets, true); 
     for (let i = 0; i < intersectedObjects.length; i++) {
@@ -129,13 +142,12 @@ window.addEventListener('click', (event) => {
         }
     }
 });
-const canvas = document.querySelector('.planet-container');
 
 window.addEventListener('mousemove', (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    const canvasBounds = canvas.getBoundingClientRect();
+    mouse.x = ((event.clientX - canvasBounds.left)/ canvasBounds.width) * 2 - 1;
+    mouse.y = -((event.clientY - canvasBounds.top)/ canvasBounds.height) * 2 + 1;
     
-
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(activePlanets, true);
     if (intersects.length > 0) {
@@ -227,7 +239,7 @@ function createPuddle() {
     puddle.style.filter = `hue-rotate(${randomHue}deg)`;
 
     puddle.addEventListener('click', () => {
-        getSelectedPlanet("Puddle"); //even though its not a planet, its also clickable. 
+        getSelectedPlanet("Universe"); //even though its not a planet, its also clickable. 
         alert("This is a space puddle");
         puddle.remove();
     });
@@ -240,5 +252,3 @@ function createPuddle() {
 
 createPuddle();
 setInterval(createPuddle, 10000);
-
-

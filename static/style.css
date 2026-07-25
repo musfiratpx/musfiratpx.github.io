@@ -8,12 +8,11 @@ html, body {
 /* activate: .\venv\Scripts\Activate.ps1, deactive */
 body {
   /* base gradient */
-  
+  display: flex;
+  flex-direction: column;
   background-image: linear-gradient(135deg, #070221 0%, #04020F 100%);
-  /* this tells it to stack the stars*/
   position: relative;
 }
-
 body::before { /* stack stars before you create the gradient */
   content: "";
   position: fixed;
@@ -42,11 +41,14 @@ body::before { /* stack stars before you create the gradient */
 .planet-container  {
   width: 100vw !important;
   height: 100vh !important;
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   display: block;
 }
+
+
+
 
 /* puddles */
 #puddle-container {
@@ -55,8 +57,8 @@ body::before { /* stack stars before you create the gradient */
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 2;           /* sit completely in front of the planets */
-  pointer-events: none; /* clickable puddles */
+  z-index: 2;   
+  pointer-events: none;
   overflow: hidden;
 }
 
@@ -107,14 +109,6 @@ body::before { /* stack stars before you create the gradient */
 }
 
 
-
-
-
-
-
-
-
-
 .glow {
   color: #E0DBFF;
   text-align: center;
@@ -130,4 +124,54 @@ body::before { /* stack stars before you create the gradient */
     text-shadow: 0 0 15px #E0DBFF, 0 0 15px #6358e1, 0 0 15px #6358e1, 0 0 15px #6358e1, 0 0 15px #6358e1, 0 0 15px #6358e1, 0 0 15px #6358e1;
   }
 }
+/* out-put box*/
+
+.response-box {
+    width: 85%;
+    min-width: 500px;
+    min-height:200px;
+    max-width: 700px;
+    max-height: 250px;         
+    overflow-y: auto;      
+    margin: 20px auto 40px auto;
+    padding: 24px;
+    box-sizing: border-box;    
+    
+    border: 2px solid #c1bfc8;
+    border-radius: 16px;
+    background-color: #15095f54;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.planet-fact {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: whitesmoke;
+    margin-top: 12px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.response-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.response-box::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.response-box::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.response-box::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+
+
 
