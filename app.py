@@ -1,26 +1,31 @@
 from flask import Flask, render_template, request, jsonify 
 from flask_cors import CORS
-from tavily import TavilyClient
 import os
+import requests
 from dotenv import load_dotenv
-from google import genai
 #------------------------------code start-----------------------------------
 
 app = Flask(__name__, template_folder='.')
 CORS(app, origins=["https://theouterspace.io", "https://musfiratpx.github.io"])
 load_dotenv()
 tavily_key = os.getenv("TAVILY_API_KEY")
+gemini_key = os.getenv("GEMINI_API_KEY")
 #-----------------helper functions---------------------
 def generateInfo(planet): #logic to generate information for the planet 
 
     try:
-        tavily_client = TavilyClient(api_key=f"{tavily_key}")
-        gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-        search = tavily_client.search(
-                query=f"mathematical facts orbital mechanics mass radius density numbers about {planet}", 
-                search_depth="basic",
-                max_results=3
-            )
+        tavily_response = requests.post(
+            "https://api.tavily.com/search",
+            json={
+                "api_key": tavily_key,
+                "query": f"mathematical facts orbital mechanics mass radius density numbers about {planet}",
+                "search_depth":"basic",
+                 "max_results": 3
+            },
+            timeout=8
+        )
+
+        search = tavily_response.json()
         raw_snippets = " ".join([r.get('content', '') for r in search.get('results', [])])
 
         prompt = f"""
@@ -36,14 +41,24 @@ def generateInfo(planet): #logic to generate information for the planet
             {raw_snippets[:1500]}
             """
 
-        result = gemini_client.models.generate_content(
-                model='gemini-2.0-flash',
-                contents=prompt,
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}"
+        gemini_response = requests.post(
+            gemini_url,
+            headers={"Content-Type": "application/json"},
+            json={
+                "contents": [{
+                    "parts": [{"text": prompt}]
+                }]
+            },
+            timeout=10
         )
-        return result.text.strip()
+        gemini_data = gemini_response.json()
+
+        fact_text = gemini_data['candidates'][0]['content']['parts'][0]['text']
+        return fact_text.strip()
     except Exception as e:
         print(f"Error generating: {e}", flush=True)
-        if(planet == "Puddle"):
+        if(planet == "Universe"):
             return "The universe has many mathematical things to discover."
         return f"{planet} has fascinating orbital statistics and structural dimensions."
 
