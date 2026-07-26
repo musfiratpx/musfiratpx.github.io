@@ -6,12 +6,29 @@ from dotenv import load_dotenv
 #------------------------------code start-----------------------------------
 
 app = Flask(__name__, template_folder='.')
-CORS(app, origins=["https://theouterspace.io", "https://musfiratpx.github.io"])
-CORS(app, resources={r"/api/*": {"origins": "*"}}, methods=["GET", "POST", "OPTIONS"])
+CORS(
+    app,
+    resources={r"/api/*": {"origins": "*"}},
+    methods=["GET", "POST", "OPTIONS"],
+)
 load_dotenv()
 tavily_key = os.getenv("TAVILY_API_KEY")
 gemini_key = os.getenv("GEMINI_API_KEY")
 #-----------------helper functions---------------------
+fallback = {
+    "Mercury": "There are strangle hollows on Mercury's surface, thousands of weird depressions at a variety of longitudes and latitudes. Could be 60 feet to miles...and a depth of 80+ feet. No one knows how they got there, and there's nothing like it anywhere else.",
+    "Venus": "Earth and Venus are called 'twins separated at birth' they have similar everything, but some say Venus' atmosphere is due to carbon dioxide making the planet 870 degrees fahrenheit. Maybe Earth will become the next Venus at a certain point?",
+    "Earth": "We still don't know how to accurately predict earthquakes or why seismic waves happen..",
+    "Mars": "Mars used to be known to move in perfect circles (thanks to ancient Greek metaphysics). In the early 17th century, Johannes Kepler showed that Mars (& all planets) orbit the Sun in ellipses using mathematical discoveries derived from Tycho Brahe's observational data",
+    "Jupiter": "The Grand tack hypothesis proposes that Jupiter formed near the ice line (~3.5 AU) and then migrated inward to ~1.5 AU before being captured in a 2:3 orbital resonance with Saturn, which reversed its migration",
+    "Saturn": "In 2004, scientists estimated that the core must be 9 to 22 times the mass of Earth, which is about a diameter of 12,000 miles",
+    "Uranus": "Uranus has a ring system, a magnetosphere, and many natural satellites. The extremely dark ring system reflects only 2/100 of the incoming light. ",
+    "Neptune": "Neptune's axis of rotation is tilted 28 degrees with respect to the plane of its orbit around the Sun, similar to the axial tilts of Mars & Earth. Neptune experiences seasons just like we do on Earth! But it has a long year, so each season lasts 40 Earth years.",
+    "Universe":"The universe is a Fibonacci structure. It also appears in nature. Check out spiral galaxy arms and the golden spiral!"
+}
+
+
+
 def generateInfo(planet): #logic to generate information for the planet 
 
     try:
@@ -59,9 +76,7 @@ def generateInfo(planet): #logic to generate information for the planet
         return fact_text.strip()
     except Exception as e:
         print(f"Error generating: {e}", flush=True)
-        if(planet == "Universe"):
-            return "The universe has many mathematical things to discover."
-        return f"{planet} has fascinating orbital statistics and structural dimensions."
+        return fallback.get(planet, f"{planet} has many amazing mathematical attributes.")
 
 
 @app.route('/')
@@ -85,7 +100,7 @@ def selected_planet():
     if planet_name in planets:
        facts = generateInfo(planet_name)
     else:
-        facts = generateInfo("The universe")
+        facts = generateInfo("Universe")
 
     planetInfo ={
             "status": "success",
@@ -97,4 +112,5 @@ def selected_planet():
 #Get-Process -Name python -ErrorAction SilentlyContinue | Stop-Process if running multiple processes.
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
